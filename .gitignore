@@ -8,3 +8,4 @@ pycache/
 .vscode/
 .env
 src/__pycache__/
+estrutura.txt

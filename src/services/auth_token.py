@@ -12,7 +12,7 @@ DEFAULT_MODEL = {
       {
         "activation": "relu",
         "input_shape": [
-          10
+          19
         ],
         "type": "Dense",
         "units": 64

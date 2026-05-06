@@ -3,13 +3,15 @@ import uvicorn
 
 from fastapi import FastAPI, HTTPException
 
-import api.route_manager as route_manager
+import services.route_manager as route_manager
 import services.data_manager as data_manager
 from services import auth_token
 from config import settings
 
 from schemas.data import ModelDataValidator, ModelDataResponse
 from services.cedri_ia import client
+
+from tasks.scheduler import scheduler, setup_scheduler
 
 import os
 
@@ -31,17 +33,8 @@ async def lifespan(app: FastAPI):
     log(f"[setting] IA Manager:\t {settings[m.IPIA]}:{settings[m.PORTIA]}")
     log("Starting Program...",0)
 
-    # Start services
-    auth_token.run()
-
-    # Start managers
-    if not route_manager.run():
-        log("Stopping Program...", 0)
-        os._exit(1)
-    
-    if not data_manager.run():
-        log("Stopping Program...", 0)
-        os._exit(1)
+    setup_scheduler()
+    scheduler.start()
     
     yield
     log("Stopping Program...", 0)
