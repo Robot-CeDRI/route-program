@@ -9,10 +9,12 @@ from services import auth_token
 from config import settings
 
 from schemas.data import ModelDataValidator, ModelDataResponse
+from services.cedri_ia import client
+
+import os
 
 from core import messages as m
-from core.log import log
-
+from core.log import log, setVerbose
 
 active_models = {}
 active_sessions = {}
@@ -23,18 +25,26 @@ active_sessions = {}
 
 
 async def lifespan(app: FastAPI):
-    log.setVerbose()
+    setVerbose(settings[m.VERBOSE])
     log(f"starting with Verbose Mode ON...")
-    log(f"[settingsurações de Rede: PORT={settings[m.PORT]}]")
-    log(f"[settingsurações da IA: IP={settings[m.IPIA]}, PORT={settings[m.PORTIA]}]")
-    log("Starting Server...",0)
+    log(f"[setting] Program:\t\t 0.0.0.0:{settings[m.PORT]}")
+    log(f"[setting] IA Manager:\t {settings[m.IPIA]}:{settings[m.PORTIA]}")
+    log("Starting Program...",0)
 
+    # Start services
     auth_token.run()
-    route_manager.run()
-    data_manager.run()
+
+    # Start managers
+    if not route_manager.run():
+        log("Stopping Program...", 0)
+        os._exit(1)
+    
+    if not data_manager.run():
+        log("Stopping Program...", 0)
+        os._exit(1)
     
     yield
-    log("Stopping Server...")
+    log("Stopping Program...", 0)
 
 app = FastAPI(
     title="CEDRI Route Manager",
@@ -65,17 +75,29 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="CEDRI AI Manager Startup Script")
     
     parser.add_argument("-v", "--verbose", action="store_true", help="Activate detailed loggings.")
-    parser.add_argument("--port", type=int, default=48001, help="Server port")
-    parser.add_argument("--ipia", type=str, default="0.0.0.0", help="Communication IP with the AI")
-    parser.add_argument("--portia", type=int, default=48000, help="Communication port with the AI")
+    parser.add_argument("--port", type=int, help="Server port")
+    parser.add_argument("--ipia", type=str, help="Communication IP with the AI")
+    parser.add_argument("--portia", type=int, help="Communication port with the AI")
     parser.add_argument("--new", action="store_true", help="Create a new model model_token, ignoring existing ones.")
 
     args = parser.parse_args()
 
-    settings[m.VERBOSE] = args.verbose
-    settings[m.PORT] = args.port
-    settings[m.IPIA] = args.ipia
-    settings[m.PORTIA] = args.portia
-    settings[m.NEW] = args.new
+    if args.verbose:
+        settings[m.VERBOSE] = True
+    else:
+        settings[m.VERBOSE] = False
+
+    if args.new:
+        settings[m.NEW] = True
+    else:
+        settings[m.NEW] = False
+
+    if args.port is not None:
+        settings[m.PORT] = args.port
+    if args.ipia is not None:
+        settings[m.IPIA] = args.ipia
+    if args.portia is not None:
+        settings[m.PORTIA] = args.portia
+
     
-    uvicorn.run(app, host="0.0.0.0", port=args.port)
+    uvicorn.run(app, host="0.0.0.0", port=int(settings[m.PORT]))

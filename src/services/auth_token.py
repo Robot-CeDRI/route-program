@@ -1,6 +1,36 @@
 import sqlite3 as sqlite
-import model_create as model_create
+from services.cedri_ia.client import ia_client
+
+from core import messages as m
+from config import settings
+
 from core.log import log
+
+DEFAULT_MODEL = {
+  "architecture": {
+    "layers": [
+      {
+        "activation": "relu",
+        "input_shape": [
+          10
+        ],
+        "type": "Dense",
+        "units": 64
+      },
+      {
+        "activation": "linear",
+        "type": "Dense",
+        "units": 2
+      }
+    ]
+  },
+  "learning_type": "supervised",
+  "training_config": {
+    "learning_rate": 0.001,
+    "loss_function": "mse",
+    "optimizer": "adam"
+  }
+}
 
 CREATE_STRING = """CREATE TABLE IF NOT EXISTS tokens (
     id INTEGER PRIMARY KEY,
@@ -16,7 +46,7 @@ def __createNewToken(token):
             conn.commit()
             log("New token created successfully.")
     except sqlite.Error as e:
-        log(f"Database error: {e}", 3)
+        log(f"Database error: {e}", level=3)
         return None
 
 def run():
@@ -29,29 +59,30 @@ def run():
             conn.commit()
             log("Database initialized successfully.")
     except sqlite.Error as e:
-        log(f"Database error: {e}", 3)
+        log(f"Database error: {e}", level=3)
         return False
     return True
 
-def getToken(config):
+def getToken():
     """Retrieves the current token from the database, or creates a new one if none exists."""
     try:
         with sqlite.connect("data.db") as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT token FROM tokens LIMIT 1")
+            cursor.execute("SELECT token FROM tokens ORDER BY id DESC LIMIT 1")
             result = cursor.fetchone()
-            if result:
+            if result and not settings[m.NEW]:
                 return result[0]
             else:
-                token = model_create.createModel(config)
+                response = ia_client.create_model(DEFAULT_MODEL)
+                token = response.get("token")
                 log("Creating token")
                 if token:
                     __createNewToken(token)
                     return token
                 else:
-                    log("Failed to create token.", 3)
+                    log("Failed to create token.", level=3)
                     return None
     except sqlite.Error as e:
-        log(f"Database error: {e}", 3)
+        log(f"Database error: {e}", level=3)
         return None
     
