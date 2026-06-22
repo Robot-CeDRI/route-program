@@ -1,15 +1,21 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel
+from typing import List, Any
 
 # ==========================================
 # MAIN SCHEMA (REQUEST)
 # ==========================================
 
 class ModelDataValidator(BaseModel):
-    pass
-
+    x: float
+    y: float
+    people: int
+    is_helping: bool
+    moving : bool
+    unique_people: List[str]
 # ==========================================
 # RESPONSE SCHEMA (WHAT IS RETURNED)
 # ==========================================
 
 class ModelDataResponse(BaseModel):
-    pass
+    message: str
+    error: bool

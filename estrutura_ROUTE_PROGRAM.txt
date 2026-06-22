@@ -1,0 +1,71 @@
+.
+├── data
+│   └── data.db
+├── estrutura_IA_PROGRAM.txt
+├── LICENSE
+├── README.md
+├── requirements.txt
+├── src
+│   ├── api
+│   │   ├── data_receiver.py
+│   │   └── __pycache__
+│   │       ├── data_receiver.cpython-313.pyc
+│   │       └── route_manager.cpython-313.pyc
+│   ├── config.py
+│   ├── core
+│   │   ├── fallback_manager.py
+│   │   ├── ia_translator.py
+│   │   ├── log.py
+│   │   ├── messages.py
+│   │   └── __pycache__
+│   │       ├── fallback_manager.cpython-313.pyc
+│   │       ├── ia_translator.cpython-313.pyc
+│   │       ├── log.cpython-313.pyc
+│   │       └── messages.cpython-313.pyc
+│   ├── database
+│   │   ├── connection.py
+│   │   ├── memories_model.py
+│   │   ├── __pycache__
+│   │   │   ├── memories_model.cpython-313.pyc
+│   │   │   ├── repository.cpython-313.pyc
+│   │   │   └── token_model.cpython-313.pyc
+│   │   ├── repository.py
+│   │   └── token_model.py
+│   ├── main.py
+│   ├── path.py
+│   ├── __pycache__
+│   │   ├── config.cpython-313.pyc
+│   │   ├── data_manager.cpython-313.pyc
+│   │   └── route_manager.cpython-313.pyc
+│   ├── schemas
+│   │   ├── data_receive.py
+│   │   └── __pycache__
+│   │       ├── data.cpython-313.pyc
+│   │       └── data_receive.cpython-313.pyc
+│   ├── services
+│   │   ├── cedri_ia
+│   │   │   ├── client.py
+│   │   │   ├── model_load.py
+│   │   │   └── __pycache__
+│   │   │       ├── client.cpython-313.pyc
+│   │   │       └── model_load.cpython-313.pyc
+│   │   ├── hello.py
+│   │   └── __pycache__
+│   │       ├── auth_token.cpython-313.pyc
+│   │       ├── data_manager.cpython-313.pyc
+│   │       └── hello.cpython-313.pyc
+│   └── tasks
+│       ├── metrics_sync.py
+│       ├── __pycache__
+│       │   ├── metrics_sync.cpython-313.pyc
+│       │   ├── route_update.cpython-313.pyc
+│       │   └── scheduler.cpython-313.pyc
+│       ├── route_update.py
+│       └── scheduler.py
+└── tests
+    ├── sensor
+    │   ├── mock.py
+    │   └── simulator.py
+    └── visualizer.py
+
+20 directories, 49 files

@@ -66,17 +66,11 @@ class CEDRIClient:
             return True
         return False
 
-    def check_model(self, payload: dict) -> dict:
-        """Checks the status or details of a model."""
-        return self._make_request("POST", CHECK_ENDPOINT, payload=payload)
+    # === Full payload operations === #
 
     def create_model(self, payload: dict) -> dict:
         """Creates a new model in the IA Manager."""
         return self._make_request("POST", CREATE_ENDPOINT, payload=payload)
-
-    def load_model(self, payload: dict) -> dict:
-        """Loads a model into memory."""
-        return self._make_request("POST", LOAD_ENDPOINT, payload=payload)
 
     def process_data(self, payload: dict) -> dict:
         """Sends data to a loaded model for processing/inference."""
@@ -86,8 +80,18 @@ class CEDRIClient:
         """Initiates the training process for a model."""
         return self._make_request("POST", TRAIN_ENDPOINT, payload=payload)
 
-    def unload_model(self, payload: dict) -> dict:
+    # === Only token operations === #
+
+    def check_model(self, token : str) -> dict:
+        """Checks the status or details of a model."""
+        return self._make_request("POST", CHECK_ENDPOINT, payload={"token": token})
+
+    def load_model(self, token: str) -> dict:
+        """Loads a model into memory."""
+        return self._make_request("POST", LOAD_ENDPOINT, payload={"token": token})
+
+    def unload_model(self, token : str) -> dict:
         """Unloads a model from memory."""
-        return self._make_request("POST", UNLOAD_ENDPOINT, payload=payload)
+        return self._make_request("POST", UNLOAD_ENDPOINT, payload={"token": token})
 
 ia_client = CEDRIClient()

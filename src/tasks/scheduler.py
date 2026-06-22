@@ -12,7 +12,7 @@ scheduler = AsyncIOScheduler()
 def setup_scheduler():
     scheduler.add_job(
         metrics_sync.run, 
-        trigger=IntervalTrigger(hours=24), 
+        trigger=IntervalTrigger(hours=10), 
         id='job_sync_metrics', 
         name='Sincronização Diária de Métricas',
         replace_existing=True
@@ -23,5 +23,6 @@ def setup_scheduler():
         trigger=IntervalTrigger(hours=1), 
         id='job_update_routes', 
         name='Atualização Horária de Rotas',
-        replace_existing=True
+        replace_existing=True,
+        max_instances=1
     )

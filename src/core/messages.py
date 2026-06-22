@@ -5,6 +5,7 @@ IPIA        = "IA_IP"
 PORTIA      = "IA_PORT"
 RUNNING     = "RUNNING"
 TOKEN       = "TOKEN"
+LAST_TOKEN  = "LAST_TOKEN"
 NEW         = "NEW"
 
 DEFAUT_TIMEOUT = "DEFAULT_TIMEOUT"

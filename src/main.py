@@ -3,14 +3,12 @@ import uvicorn
 
 from fastapi import FastAPI, HTTPException
 
-import services.route_manager as route_manager
-import services.data_manager as data_manager
-from services import auth_token
 from config import settings
+from api import data_receiver
 
-from schemas.data import ModelDataValidator, ModelDataResponse
-from services.cedri_ia import client
+from database import repository as db
 
+from schemas.data_receive import ModelDataValidator, ModelDataResponse
 from tasks.scheduler import scheduler, setup_scheduler
 
 import os
@@ -33,8 +31,12 @@ async def lifespan(app: FastAPI):
     log(f"[setting] IA Manager:\t {settings[m.IPIA]}:{settings[m.PORTIA]}")
     log("Starting Program...",0)
 
+    if not db.start():
+        log("Failed to initialize the database. Exiting.", 3)
+        os._exit(1)
+
     setup_scheduler()
-    scheduler.start()
+    scheduler.start()    
     
     yield
     log("Stopping Program...", 0)
@@ -57,7 +59,7 @@ async def echo_route():
 @app.post("/api/models/send-data", status_code=200, response_model=ModelDataResponse)
 async def send_data(payload: ModelDataValidator):
     """Model data endpoint, receives the model data and accumulates it for further processing."""
-    result = data_manager.sendData(payload.model_dump())
+    result = data_receiver.run(payload.model_dump())
     return result
 
 # ==========================================

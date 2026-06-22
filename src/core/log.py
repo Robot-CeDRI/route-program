@@ -1,5 +1,5 @@
 __verbose = False
-__verbose_level = 1
+__verbose_level = 4
 
 debug = {
     0 : "[s]", # server
